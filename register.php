@@ -64,35 +64,51 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
     <meta charset="UTF-8">
     <title>Register</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        form { max-width: 360px; }
-        .error { color: red; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Register</h1>
+    <div class="container">
+        <div class="page-card">
+            <div class="header-row">
+                <div>
+                    <h1>Register</h1>
+                    <p class="page-intro">Create your account to start managing your tasks.</p>
+                </div>
+                <div class="button-bar">
+                    <a class="button-link" href="login.php">Already have an account?</a>
+                </div>
+            </div>
 
-    <?php foreach ($errors as $error): ?>
-        <p class="error"><?php echo htmlspecialchars($error); ?></p>
-    <?php endforeach; ?>
+            <?php if (!empty($errors)): ?>
+                <div class="alert">
+                    <?php foreach ($errors as $error): ?>
+                        <p><?php echo htmlspecialchars($error); ?></p>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
 
-    <form method="POST" action="register.php">
-        <label>Name</label><br>
-        <input type="text" name="name" value="<?php echo htmlspecialchars($name); ?>"><br><br>
-
-        <label>Email</label><br>
-        <input type="email" name="email" value="<?php echo htmlspecialchars($email); ?>"><br><br>
-
-        <label>Password</label><br>
-        <input type="password" name="password"><br><br>
-
-        <label>Confirm Password</label><br>
-        <input type="password" name="confirm_password"><br><br>
-
-        <button type="submit">Register</button>
-    </form>
-
-    <p>Already have an account? <a href="login.php">Login here</a>.</p>
+            <form method="POST" action="register.php">
+                <div class="input-group">
+                    <label>Name</label>
+                    <input type="text" name="name" value="<?php echo htmlspecialchars($name); ?>">
+                </div>
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" name="email" value="<?php echo htmlspecialchars($email); ?>">
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" name="password">
+                </div>
+                <div class="input-group">
+                    <label>Confirm Password</label>
+                    <input type="password" name="confirm_password">
+                </div>
+                <div class="button-bar">
+                    <button class="btn btn-primary" type="submit">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

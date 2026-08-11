@@ -44,29 +44,43 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        form { max-width: 360px; }
-        .error { color: red; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Login</h1>
+    <div class="container">
+        <div class="page-card">
+            <div class="header-row">
+                <div>
+                    <h1>Login</h1>
+                    <p class="page-intro">Enter your credentials to access your to-do tasks.</p>
+                </div>
+                <div class="button-bar">
+                    <a class="button-link" href="register.php">Create an account</a>
+                </div>
+            </div>
 
-    <?php foreach ($errors as $error): ?>
-        <p class="error"><?php echo htmlspecialchars($error); ?></p>
-    <?php endforeach; ?>
+            <?php if (!empty($errors)): ?>
+                <div class="alert">
+                    <?php foreach ($errors as $error): ?>
+                        <p><?php echo htmlspecialchars($error); ?></p>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
 
-    <form method="POST" action="login.php">
-        <label>Email or Username</label><br>
-        <input type="text" name="login" value="<?php echo htmlspecialchars($loginValue); ?>"><br><br>
-
-        <label>Password</label><br>
-        <input type="password" name="password"><br><br>
-
-        <button type="submit">Login</button>
-    </form>
-
-    <p>Don't have an account? <a href="register.php">Register here</a>.</p>
+            <form method="POST" action="login.php">
+                <div class="input-group">
+                    <label>Email or Username</label>
+                    <input type="text" name="login" value="<?php echo htmlspecialchars($loginValue); ?>">
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" name="password">
+                </div>
+                <div class="button-bar">
+                    <button class="btn btn-primary" type="submit">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
