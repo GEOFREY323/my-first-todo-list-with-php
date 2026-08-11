@@ -1,5 +1,5 @@
 <?php
-require_once "common.php";
+require_once 'app_helpers.php';
 require_login();
 
 $taskId = $_GET['id'] ?? null;
@@ -20,10 +20,12 @@ if (!$task) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['confirm']) && $_POST['confirm'] === 'yes') {
+    if (($_POST['confirm'] ?? '') === 'yes') {
         $deleteStmt = $pdo->prepare('DELETE FROM tasks WHERE id = ? AND user_id = ?');
         $deleteStmt->execute([$taskId, $userId]);
+        set_flash('Task deleted successfully.');
     }
+
     header('Location: index.php');
     exit;
 }

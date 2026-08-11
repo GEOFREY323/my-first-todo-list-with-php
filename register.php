@@ -1,60 +1,59 @@
 <?php
-require "Todo_db.php";
-session_start();
+require_once 'app_helpers.php';
 
-if (isset($_SESSION["user_id"])) {
-    header("Location: index.php");
+if (isset($_SESSION['user_id'])) {
+    header('Location: index.php');
     exit;
 }
 
 $errors = [];
-$name = "";
-$email = "";
+$name = '';
+$email = '';
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $name = trim($_POST["name"] ?? "");
-    $email = trim($_POST["email"] ?? "");
-    $password = $_POST["password"] ?? "";
-    $confirm = $_POST["confirm_password"] ?? "";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $confirm = $_POST['confirm_password'] ?? '';
 
-    if (empty($name)) {
-        $errors[] = "Name is required.";
+    if ($name === '') {
+        $errors[] = 'Name is required.';
     }
 
-    if (empty($email)) {
-        $errors[] = "Email is required.";
+    if ($email === '') {
+        $errors[] = 'Email is required.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Invalid email address.";
+        $errors[] = 'Invalid email address.';
     }
 
-    if (empty($password)) {
-        $errors[] = "Password is required.";
+    if ($password === '') {
+        $errors[] = 'Password is required.';
     } elseif (strlen($password) < 6) {
-        $errors[] = "Password must be at least 6 characters.";
+        $errors[] = 'Password must be at least 6 characters.';
     }
 
     if ($password !== $confirm) {
-        $errors[] = "Passwords do not match.";
+        $errors[] = 'Passwords do not match.';
     }
 
     if (empty($errors)) {
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? OR name = ?");
+        $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ? OR name = ?');
         $stmt->execute([$email, $name]);
 
         if ($stmt->fetch()) {
-            $errors[] = "An account with that name or email already exists.";
+            $errors[] = 'An account with that name or email already exists.';
         }
     }
 
     if (empty($errors)) {
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare("INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)");
+        $stmt = $pdo->prepare('INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)');
         $stmt->execute([$name, $email, $passwordHash]);
 
-        $_SESSION["user_id"] = $pdo->lastInsertId();
-        $_SESSION["user_name"] = $name;
+        $_SESSION['user_id'] = $pdo->lastInsertId();
+        $_SESSION['user_name'] = $name;
 
-        header("Location: index.php");
+        header('Location: index.php');
         exit;
     }
 }
@@ -82,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <?php if (!empty($errors)): ?>
                 <div class="alert">
                     <?php foreach ($errors as $error): ?>
-                        <p><?php echo htmlspecialchars($error); ?></p>
+                        <p><?php echo e($error); ?></p>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
@@ -90,11 +89,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <form method="POST" action="register.php">
                 <div class="input-group">
                     <label>Name</label>
-                    <input type="text" name="name" value="<?php echo htmlspecialchars($name); ?>">
+                    <input type="text" name="name" value="<?php echo e($name); ?>">
                 </div>
                 <div class="input-group">
                     <label>Email</label>
-                    <input type="email" name="email" value="<?php echo htmlspecialchars($email); ?>">
+                    <input type="email" name="email" value="<?php echo e($email); ?>">
                 </div>
                 <div class="input-group">
                     <label>Password</label>

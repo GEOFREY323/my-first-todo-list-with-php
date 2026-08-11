@@ -1,29 +1,37 @@
 <?php
-require_once "common.php";
+require_once 'app_helpers.php';
 require_login();
 
-$filterPriority = $_GET["priority"] ?? "All";
-$filterStatus = $_GET["status"] ?? "All";
+$message = get_flash();
+
+$filterPriority = $_GET['priority'] ?? 'All';
+$filterStatus = $_GET['status'] ?? 'All';
 $userId = current_user_id();
 
-$query = "SELECT * FROM tasks WHERE user_id = ?";
+$query = 'SELECT * FROM tasks WHERE user_id = ?';
 $params = [$userId];
 
-if ($filterPriority !== "All" && in_array($filterPriority, ["High", "Medium", "Low"], true)) {
-    $query .= " AND priority = ?";
+if ($filterPriority !== 'All' && in_array($filterPriority, ['High', 'Medium', 'Low'], true)) {
+    $query .= ' AND priority = ?';
     $params[] = $filterPriority;
 }
 
-if ($filterStatus === "Complete") {
-    $query .= " AND is_complete = 1";
-} elseif ($filterStatus === "Incomplete") {
-    $query .= " AND is_complete = 0";
+if ($filterStatus === 'Complete') {
+    $query .= ' AND is_complete = 1';
+} elseif ($filterStatus === 'Incomplete') {
+    $query .= ' AND is_complete = 0';
 }
 
+$query .= ' ORDER BY due_date ASC, created_at DESC';
 $stmt = $pdo->prepare($query);
 $stmt->execute($params);
 $tasks = $stmt->fetchAll();
 ?>
+
+<?php if (!empty($message)): ?>
+    <div class="success-message"><?php echo e($message); ?></div>
+<?php endif; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,7 +48,7 @@ $tasks = $stmt->fetchAll();
             </div>
             <div class="button-bar">
                 <a class="btn btn-secondary" href="logout.php">Logout</a>
-                <a class="btn btn-primary" href="task_form.php">Add New Task</a>
+                <a class="btn btn-primary" href="add_task.php">Add New Task</a>
             </div>
         </div>
 
@@ -61,12 +69,14 @@ $tasks = $stmt->fetchAll();
                         <option value="Medium" <?php echo $filterPriority === 'Medium' ? 'selected' : ''; ?>>Medium</option>
                         <option value="Low" <?php echo $filterPriority === 'Low' ? 'selected' : ''; ?>>Low</option>
                     </select>
+
                     <label>Status</label>
                     <select name="status" onchange="this.form.submit()">
                         <option value="All" <?php echo $filterStatus === 'All' ? 'selected' : ''; ?>>All</option>
                         <option value="Complete" <?php echo $filterStatus === 'Complete' ? 'selected' : ''; ?>>Complete</option>
                         <option value="Incomplete" <?php echo $filterStatus === 'Incomplete' ? 'selected' : ''; ?>>Incomplete</option>
                     </select>
+
                     <button class="btn btn-secondary" type="submit">Apply</button>
                     <a class="button-link" href="index.php">Clear Filters</a>
                 </form>
@@ -94,7 +104,7 @@ $tasks = $stmt->fetchAll();
                                     <td><?php echo e($task['due_date'] ?: '-'); ?></td>
                                     <td><?php echo $task['is_complete'] ? 'Complete' : 'Incomplete'; ?></td>
                                     <td class="task-actions">
-                                        <a class="button-link" href="task_form.php?id=<?php echo $task['id']; ?>">Edit</a>
+                                        <a class="button-link" href="edit_task.php?id=<?php echo $task['id']; ?>">Edit</a>
                                         <a class="button-link" href="delete_task.php?id=<?php echo $task['id']; ?>">Delete</a>
                                         <a class="button-link" href="toggle_task.php?id=<?php echo $task['id']; ?>&action=<?php echo $task['is_complete'] ? 'incomplete' : 'complete'; ?>">
                                             <?php echo $task['is_complete'] ? 'Mark Incomplete' : 'Mark Complete'; ?>
