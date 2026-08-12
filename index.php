@@ -8,7 +8,7 @@ $filterPriority = $_GET['priority'] ?? 'All';
 $filterStatus = $_GET['status'] ?? 'All';
 $userId = current_user_id();
 
-$query = 'SELECT * FROM tasks WHERE user_id = ?';
+$query = 'SELECT * FROM tasks WHERE user_id = ? AND delete_at IS NULL';
 $params = [$userId];
 
 if ($filterPriority !== 'All' && in_array($filterPriority, ['High', 'Medium', 'Low'], true)) {
@@ -47,6 +47,7 @@ $tasks = $stmt->fetchAll();
                 <p class="page-intro">Track your tasks with priority, due dates, and completion status.</p>
             </div>
             <div class="button-bar">
+                <a class="btn btn-secondary" href="trash.php">Trash</a>
                 <a class="btn btn-secondary" href="logout.php">Logout</a>
                 <a class="btn btn-primary" href="add_task.php">Add New Task</a>
             </div>

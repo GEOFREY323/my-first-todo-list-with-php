@@ -21,9 +21,9 @@ if (!$task) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (($_POST['confirm'] ?? '') === 'yes') {
-        $deleteStmt = $pdo->prepare('DELETE FROM tasks WHERE id = ? AND user_id = ?');
+        $deleteStmt = $pdo->prepare('UPDATE tasks SET delete_at = NOW() WHERE id = ? AND user_id = ?');
         $deleteStmt->execute([$taskId, $userId]);
-        set_flash('Task deleted successfully.');
+        set_flash('Task moved to trash successfully.');
     }
 
     header('Location: index.php');
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container">
         <div class="confirm-card">
             <h1>Delete Task</h1>
-            <p class="confirm-note">Are you sure you want to permanently delete the task "<?php echo e($task['title']); ?>"?</p>
+            <p class="confirm-note">Are you sure you want to delete the task "<?php echo e($task['title']); ?>"?</p>
             <form method="POST" action="delete_task.php?id=<?php echo e($taskId); ?>">
                 <div class="button-bar">
                     <button class="btn btn-danger" type="submit" name="confirm" value="yes">Yes, delete</button>
